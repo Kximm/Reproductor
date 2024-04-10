@@ -57,7 +57,51 @@ namespace PlayerBlazorApp.Services
 
             return "Nodo agregado al Final...";
         }
+        public string AgregarEnPosicion(int posicion, Nodo nuevonodo)
+        {
+            if (IsEmpty || posicion <= 0)
+            {
+                return AgregarNodoAlInicio(nuevonodo);
+            }
 
+            if (posicion == 1)
+            {
+                return AgregarNodoAlInicio(nuevonodo);
+            }
+            else
+            {
+                Nodo nodoaux = PrimerNodo;
+                int contador = 1;
+                while (nodoaux != null && contador < posicion - 1)
+                {
+                    nodoaux = nodoaux.LigaSiguiente;
+                    contador++;
+                }
+                if (nodoaux == null)
+                {
+                    return AgregarNodoAlFinal(nuevonodo);
+                }
+                else
+                {
+                    nuevonodo.LigaAnterior = nodoaux;
+                    nuevonodo.LigaSiguiente = nodoaux.LigaSiguiente;
+                    nodoaux.LigaSiguiente = nuevonodo;
+                    nuevonodo.LigaAnterior.LigaSiguiente = nuevonodo;
+                }
+                NodoActual = nuevonodo;
+                return "NODOA GREGADO EN POSICIION ESPESIFICA ";
+            }
+        }
+        public Nodo Posicion(int posicion)
+        {
+            int contador = 1;
+            while (contador < posicion-1 && NodoActual!=null )
+            {
+                posicion++;
+                NodoActual = NodoActual.LigaSiguiente;
+            }
+            return NodoActual;
+        }
         public Nodo Siguiente()
         {
             NodoActual = NodoActual.LigaSiguiente ?? UltimoNodo;

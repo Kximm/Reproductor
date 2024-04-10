@@ -18,25 +18,31 @@
     <button @onclick="Before" class="me-2 btn btn-success">Anterior</button>
     <button @onclick="Next" class="me-2 btn btn-danger">Siguiente</button>
     <button @onclick="Last" class="me-2 btn btn-warning">Final</button>
+    <button @onclick="Position" class="me-2 btn btn-warning">Posicion</button>
 
 </div>
-
-
+<hr />
+<div>
+    <input type="number" class="form form-control m-2" @bind="posicion" />
+</div>
 @* para guardar *@
-
+<hr />
 <div >
     <input type="text" class="form-control mb-2" @bind-value="YoutubeLink" />
     <button class="btn btn-success" @onclick="Save">Guardar Al Inicio</button>
     <button class="btn btn-success" @onclick="SaveEnd">Guardar Al Final</button>
     <button class="me-2 btn btn-danger" @onclick="DeleteEnd">Eliminar Al Final</button>
     <button class="me-2 btn btn-danger" @onclick="DeleteStart">Eliminar Al Inicio</button>
+    <hr />
+    <button class="btn btn-success" @onclick="SavePosition">Guardar En Posicion Espesificada</button>
+ 
 </div>
 
 <p>@Mensaje</p>
 
 @code{
     DoubleLinkedList lista;
-
+    public int posicion;
     string YoutubeLink = string.Empty;
     string YoutubeId = string.Empty;
     string Mensaje = string.Empty;
@@ -85,7 +91,11 @@
         lista.NodoActual = lista.PrimerNodo;
         PlayVideo();
     }
-
+    void Position()
+    {
+        lista.Posicion(posicion);
+        PlayVideo();
+    }
     void Before()
     {
         lista.Anterior();
@@ -127,6 +137,13 @@
 
         YoutubeLink = string.Empty;
     }
+    void SavePosition()
+    {
+        var nuevonodo = new Nodo(YoutubeLink);
+        Mensaje = lista.AgregarEnPosicion(posicion, nuevonodo);
+        PlayVideo();
+        YoutubeLink = string.Empty;
+    }
     void DeleteEnd()
     {
 
@@ -134,9 +151,9 @@
         Mensaje = lista.EliminarNodoAlFinal();
 
         PlayVideo();
-       
-    }
 
+    }
+  
     void DeleteStart()
     {
 
