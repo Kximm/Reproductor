@@ -28,6 +28,8 @@
     <input type="text" class="form-control mb-2" @bind-value="YoutubeLink" />
     <button class="btn btn-success" @onclick="Save">Guardar Al Inicio</button>
     <button class="btn btn-success" @onclick="SaveEnd">Guardar Al Final</button>
+    <button class="me-2 btn btn-danger" @onclick="DeleteEnd">Eliminar Al Final</button>
+    <button class="me-2 btn btn-danger" @onclick="DeleteStart">Eliminar Al Inicio</button>
 </div>
 
 <p>@Mensaje</p>
@@ -124,5 +126,24 @@
         PlayVideo();
 
         YoutubeLink = string.Empty;
+    }
+    void DeleteEnd()
+    {
+
+
+        Mensaje = lista.EliminarNodoAlFinal();
+
+        PlayVideo();
+       
+    }
+
+    void DeleteStart()
+    {
+
+
+        Mensaje = lista.EliminarNodoAlInicio();
+
+        PlayVideo();
+
     }
 }
