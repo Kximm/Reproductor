@@ -89,7 +89,7 @@ namespace PlayerBlazorApp.Services
                     nuevonodo.LigaAnterior.LigaSiguiente = nuevonodo;
                 }
                 NodoActual = nuevonodo;
-                return "NODOA GREGADO EN POSICIION ESPECIFICA ";
+                return "NODO AGREGADO EN POSICIÓN ESPECÍFICA ";
             }
         }
         public Nodo Posicion(int posicion)
