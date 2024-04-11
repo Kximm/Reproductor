@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using PlayerBlazorApp.Models
 @using PlayerBlazorApp.Services
+@using System.Text
 
 <PageTitle>Home</PageTitle>
 
@@ -8,9 +9,9 @@
 
 @if (!string.IsNullOrEmpty(YoutubeId))
 {
-    <div class="d-flex justify-content-center mb-2">
-        <iframe src="@YoutubeId" width="800" height="400" frameborder="0" allowfullscreen></iframe>
-    </div>
+	<div class="d-flex justify-content-center mb-2" style="background-color:black">
+		<iframe src="@YoutubeId" width="800" height="400" frameborder="0" allowfullscreen ></iframe>
+	</div>
 }
 
 
@@ -19,345 +20,367 @@
 
 <div class="d-flex justify-content-center mb-2">
 
-    
-    <button @onclick="First" class="btn btn-outline-warning">Primero</button>
-    <button @onclick="Before" class="btn btn-outline-warning">Anterior</button>
-    <button @onclick="Next" class="btn btn-outline-warning">Siguiente</button>
-    <button @onclick="Last" class="btn btn-outline-warning">Final</button>
+
+	<button @onclick="First" class="btn btn-outline-dark"> Primero</button>
+	<button @onclick="Before" class="btn btn-outline-dark">Anterior</button>
+	<button @onclick="Next" class="btn btn-outline-dark">Siguiente</button>
+	<button @onclick="Last" class="btn btn-outline-dark">Final</button>
+
 
 </div>
 <hr />
-<div>
-    <input type="number" class="form form-control m-2" @bind="posicion" />
-</div>
+
 @* para guardar *@
 
 
 <div>
-    <input type="text" class="form-control mb-2"placeholder="Enlace del video a agregar" @bind-value="YoutubeLink" />
-    <input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToAddAfter" placeholder="Enlace del video después / antes del cual deseas agregar" />
-    <input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToDelete" placeholder="Enlace  del video antes/despues o enlace si deseas eliminar " />
-    <input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToSearch" placeholder="Enlace de YouTube del video a buscar" />
+
+
+	<div class="input-group">
+	<input type="text" class="form-control mb-2" placeholder="Enlace del video a agregar" @bind-value="YoutubeLink" />
+
+		<input type="number" class="form-control mb-2" placeholder="Posición" @bind=" posicion" />
+		
+		
+	</div>
+ 
+
+
+
+	<div class="d-flex justify-content-center mb-2">
+		<div class="input-group-append">
+			<div class="dropdown">
+
+				<button class="btn btn-outline-dark dropdown-toggle dropdown-toggle-split" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Opciones
+				</button>
+				<div class="dropdown-menu dropdown-menu-end" aria-labelledby="saveDropdown">
+					<button class="dropdown-item" @onclick="Save">Guardar Al Inicio</button>
+					<button class="dropdown-item" @onclick="SaveEnd">Guardar Al Final</button>
+					<button class="dropdown-item" @onclick="DeleteStart">Eliminar Al Inicio</button>
+					<button class="dropdown-item" @onclick="DeleteEnd">Eliminar Al Final</button>
+					<button class="dropdown-item" @onclick="SavePosition">Guardar En Posición Específica</button>
+					<button class="dropdown-item" @onclick="SaveAfterPosition">Guardar Después de la Posición Específica</button>
+					<button class="dropdown-item" @onclick="SaveBeforePosition">Guardar Antes de la Posición Específica</button>
+					<button class="dropdown-item" @onclick="AddAfter">Agregar Después del Video</button>
+					<button class="dropdown-item" @onclick="AddBefore">Agregar Antes del Video</button>
+					<button class="dropdown-item" @onclick="DeleteAfter">Eliminar Después del Video</button>
+					<button class="dropdown-item" @onclick="DeleteBefore">Eliminar Antes del Video</button>
+					<button class="dropdown-item" @onclick="DeleteByLink">Eliminar por link del video</button>
+					<button class="dropdown-item" @onclick="DeleteByPosition">Eliminar por Posicion</button>
+					<button class="dropdown-item" @onclick="OrdenarListaPorEnlace">Ordenar por Enlace</button>
+					<button class="dropdown-item" @onclick="BuscarVideoPorEnlace">Buscar Video</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToAddAfter" placeholder="Enlace del video después / antes del cual deseas agregar" />
+	<input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToDelete" placeholder="Enlace  del video antes/despues o enlace si deseas eliminar " />
+	<input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToSearch" placeholder="Enlace de YouTube del video a buscar" />
 </div>
-<div class="d-grid gap-2 col-2 mx-auto">
-    
-    <button class="btn btn-outline-success" @onclick="Save">Guardar Al Inicio</button>
-    <button class="btn btn-outline-success" @onclick="SaveEnd">Guardar Al Final</button>
-    <button class="btn btn-outline-danger" @onclick="DeleteStart">Eliminar Al Inicio</button>
-    <button class="btn btn-outline-danger" @onclick="DeleteEnd">Eliminar Al Final</button>
-    <button class="btn btn-success" @onclick="SavePosition">Guardar En Posicion Espesificada</button>
-    <button class="btn btn-success" @onclick="SaveAfterPosition">Guardar Después de la Posición</button>
-    <button class="btn btn-success" @onclick="SaveBeforePosition">Guardar Antes de la Posición</button>
-    <button class="btn btn-success" @onclick="AddAfter">Agregar después del video</button>
-    <button class="btn btn-success" @onclick="AddBefore">Agregar antes del video</button>
-    <button class="btn btn-danger" @onclick="DeleteAfter">Eliminar después del video</button>
-    <button class="btn btn-danger" @onclick="DeleteBefore">Eliminar antes del video</button>
-    <button class="btn btn-danger" @onclick="DeleteByLink">Eliminar por link dek video</button>
-    <button class="btn btn-danger" @onclick="DeleteByPosition">Eliminar por posicion</button>
-    <button class="btn btn-primary" @onclick="OrdenarListaPorEnlace">Ordenar por enlace</button>
-    <button class="btn btn-primary" @onclick="BuscarVideoPorEnlace">Buscar video</button>
 
-</div>
 
-<div>
-    <button class="btn btn-primary" @onclick="ToggleRecorrido">Mostrar/ocultar recorrido recursivo</button>
 
-    @if (MostrarRecorrido)
-    {
-        <p>@Recorrido</p>
-    }
 
-</div>
+<button class="btn btn-outline-dark" @onclick="ToggleRecorrido"> recorrido recursivo</button>
+
+@if (MostrarRecorrido)
+{
+	<p>@Recorrido</p>
+}
+
+
 <p>@Mensaje</p>
 
-@code{
-    string EnlaceVideoEncontrado = string.Empty;
-    DoubleLinkedList lista;
-    public int posicion;
-    string YoutubeLinkToDelete = string.Empty;
-    string YoutubeLinkToAddAfter = string.Empty;
-    string YoutubeLink = string.Empty;
-    string YoutubeId = string.Empty;
-    string Mensaje = string.Empty;
-    string YoutubeLinkToSearch = string.Empty;
-    bool MostrarRecorrido = false;
-    string Recorrido = string.Empty;
+@code {
+	string EnlaceVideoEncontrado = string.Empty;
+	DoubleLinkedList lista;
+	public int posicion;
+	string YoutubeLinkToDelete = string.Empty;
+	string YoutubeLinkToAddAfter = string.Empty;
+	string YoutubeLink = string.Empty;
+	string YoutubeId = string.Empty;
+	string Mensaje = string.Empty;
+	string YoutubeLinkToSearch = string.Empty;
+	bool MostrarRecorrido = false;
+	string Recorrido = string.Empty;
 
-    protected override void OnInitialized()
-    {
-        lista = new DoubleLinkedList();
-    }
+	protected override void OnInitialized()
+	{
+		lista = new DoubleLinkedList();
+	}
 
-    void PlayVideo()
-    {
-        if (lista.NodoActual is not null)
-        {
-            YoutubeLink = lista.NodoActual.Informacion;
+	void PlayVideo()
+	{
+		if (lista.NodoActual is not null)
+		{
+			YoutubeLink = lista.NodoActual.Informacion;
 
-            var videoId = GetVideoId(YoutubeLink);
+			var videoId = GetVideoId(YoutubeLink);
 
-            if (!string.IsNullOrEmpty(videoId))
-            {
-                YoutubeId = $"https://www.youtube.com/embed/{videoId}";
-            }
+			if (!string.IsNullOrEmpty(videoId))
+			{
+				YoutubeId = $"https://www.youtube.com/embed/{videoId}";
+			}
 
-        }
-
-
-    }
-
-    string GetVideoId(string link)
-    {
-        //creamos un objeto de tipo Uri
-        var uri = new Uri(link);
-
-        // obtenemos el query string del uri
-        var query = uri.Query;
-
-        // obtenemos todos los parametros del query string
-        var queryparams = System.Web.HttpUtility.ParseQueryString(query);
-
-        var videoId = queryparams["v"];
-
-        return videoId;
-    }
-
-    void First()
-    {
-        lista.NodoActual = lista.PrimerNodo;
-        PlayVideo();
-    }
-    void Before()
-    {
-        lista.Anterior();
-        PlayVideo();
-    }
-
-    void Next()
-    {
-        lista.Siguiente();
-        PlayVideo();
-
-    }
-
-    void Last()
-    {
-        lista.NodoActual = lista.UltimoNodo;
-        PlayVideo();
-
-    }
-    //----------------------------------------------------------------------------------------------------------
+		}
 
 
+	}
 
-    void Save()
-    {
-        var nuevoNodo = new Nodo(YoutubeLink);
+	string GetVideoId(string link)
+	{
+		//creamos un objeto de tipo Uri
+		var uri = new Uri(link);
 
-        Mensaje = lista.AgregarNodoAlInicio(nuevoNodo);
+		// obtenemos el query string del uri
+		var query = uri.Query;
 
-        PlayVideo();
+		// obtenemos todos los parametros del query string
+		var queryparams = System.Web.HttpUtility.ParseQueryString(query);
 
-        YoutubeLink = string.Empty;
-    }
+		var videoId = queryparams["v"];
 
-    void SaveEnd()
-    {
-        var nuevoNodo = new Nodo(YoutubeLink);
+		return videoId;
+	}
 
-        Mensaje = lista.AgregarNodoAlFinal(nuevoNodo);
+	void First()
+	{
+		lista.NodoActual = lista.PrimerNodo;
+		PlayVideo();
+	}
+	void Before()
+	{
+		lista.Anterior();
+		PlayVideo();
+	}
 
-        PlayVideo();
+	void Next()
+	{
+		lista.Siguiente();
+		PlayVideo();
 
-        YoutubeLink = string.Empty;
-    }
-    void SavePosition()
-    {
-        var nuevonodo = new Nodo(YoutubeLink);
-        Mensaje = lista.AgregarEnPosicion(posicion, nuevonodo);
-        PlayVideo();
-        YoutubeLink = string.Empty;
-    }
-    void SaveAfterPosition()
-    {
-        var nuevoNodo = new Nodo(YoutubeLink);
-        Mensaje = lista.AgregarEnPosicion(posicion + 1, nuevoNodo); // Agrega después de la posición aumento 1
-        PlayVideo();
-        YoutubeLink = string.Empty;
-    }
+	}
+
+	void Last()
+	{
+		lista.NodoActual = lista.UltimoNodo;
+		PlayVideo();
+
+	}
+
+	//----------------------------------------------------------------------------------------------------------
 
 
-    void SaveBeforePosition()
-    {
-        var nuevoNodo = new Nodo(YoutubeLink);
-        Mensaje = lista.AgregarEnPosicion(posicion - 1, nuevoNodo); // Agrega antes de la posición DECREMENTO 1
-        PlayVideo();
-        YoutubeLink = string.Empty;
-    }
-    void AddAfter()
-    {
-        if (string.IsNullOrEmpty(YoutubeLinkToAddAfter) || string.IsNullOrEmpty(YoutubeLink))
-        {
-            Mensaje = "Por favor, ingresa los enlaces de YouTube.";
-            return;
-        }
 
-        Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToAddAfter);
+	void Save()
+	{
+		var nuevoNodo = new Nodo(YoutubeLink);
 
-        if (nodoExistente == null)
-        {
-            Mensaje = "El video después del cual deseas agregar no se encontró en la lista.";
-            return;
-        }
+		Mensaje = lista.AgregarNodoAlInicio(nuevoNodo);
 
-        Nodo nuevoNodo = new Nodo(YoutubeLink);
+		PlayVideo();
 
-        Mensaje = lista.AgregarDespuesDeNodo(nodoExistente, nuevoNodo);
-        PlayVideo();
-    }
-    void AddBefore()
-    {
-        if (string.IsNullOrEmpty(YoutubeLinkToAddAfter) || string.IsNullOrEmpty(YoutubeLink))
-        {
-            Mensaje = "Por favor, ingresa los enlaces de YouTube.";
-            return;
-        }
+		YoutubeLink = string.Empty;
+	}
 
-        Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToAddAfter);
+	void SaveEnd()
+	{
+		var nuevoNodo = new Nodo(YoutubeLink);
 
-        if (nodoExistente == null)
-        {
-            Mensaje = "El video antes del cual deseas agregar no se encontró en la lista.";
-            return;
-        }
+		Mensaje = lista.AgregarNodoAlFinal(nuevoNodo);
 
-        Nodo nuevoNodo = new Nodo(YoutubeLink);
+		PlayVideo();
 
-        Mensaje = lista.AgregarAntesDeNodo(nodoExistente, nuevoNodo);
-        PlayVideo();
-    }
-    //----------------------------------------------------------------------------------------------------------
+		YoutubeLink = string.Empty;
+	}
+	void SavePosition()
+	{
+		var nuevonodo = new Nodo(YoutubeLink);
+		Mensaje = lista.AgregarEnPosicion(posicion, nuevonodo);
+		PlayVideo();
+		YoutubeLink = string.Empty;
+	}
+	void SaveAfterPosition()
+	{
+		var nuevoNodo = new Nodo(YoutubeLink);
+		Mensaje = lista.AgregarEnPosicion(posicion + 1, nuevoNodo); // Agrega después de la posición aumento 1
+		PlayVideo();
+		YoutubeLink = string.Empty;
+	}
 
-    void DeleteEnd()
-    {
-        Mensaje = lista.EliminarNodoAlFinal();
 
-        PlayVideo();
+	void SaveBeforePosition()
+	{
+		var nuevoNodo = new Nodo(YoutubeLink);
+		Mensaje = lista.AgregarEnPosicion(posicion - 1, nuevoNodo); // Agrega antes de la posición DECREMENTO 1
+		PlayVideo();
+		YoutubeLink = string.Empty;
+	}
+	void AddAfter()
+	{
+		if (string.IsNullOrEmpty(YoutubeLinkToAddAfter) || string.IsNullOrEmpty(YoutubeLink))
+		{
+			Mensaje = "Por favor, ingresa los enlaces de YouTube.";
+			return;
+		}
 
-    }
+		Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToAddAfter);
 
-    void DeleteStart()
-    {
-        Mensaje = lista.EliminarNodoAlInicio();
+		if (nodoExistente == null)
+		{
+			Mensaje = "El video después del cual deseas agregar no se encontró en la lista.";
+			return;
+		}
 
-        PlayVideo();
+		Nodo nuevoNodo = new Nodo(YoutubeLink);
 
-    }
-    void DeleteBefore()
-    {
-        if (string.IsNullOrEmpty(YoutubeLinkToDelete))
-        {
-            Mensaje = "Por favor, ingresa el enlace de YouTube del video antes del cual deseas eliminar un elemento.";
-            return;
-        }
+		Mensaje = lista.AgregarDespuesDeNodo(nodoExistente, nuevoNodo);
+		PlayVideo();
+	}
+	void AddBefore()
+	{
+		if (string.IsNullOrEmpty(YoutubeLinkToAddAfter) || string.IsNullOrEmpty(YoutubeLink))
+		{
+			Mensaje = "Por favor, ingresa los enlaces de YouTube.";
+			return;
+		}
 
-        Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToDelete);
+		Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToAddAfter);
 
-        if (nodoExistente == null)
-        {
-            Mensaje = "El video antes del cual deseas eliminar un elemento no se encontró en la lista.";
-            return;
-        }
+		if (nodoExistente == null)
+		{
+			Mensaje = "El video antes del cual deseas agregar no se encontró en la lista.";
+			return;
+		}
 
-        Mensaje = lista.EliminarAntesDeNodo(nodoExistente);
-        PlayVideo();
-    }
-    void DeleteAfter()
-    {
-        if (string.IsNullOrEmpty(YoutubeLinkToDelete))
-        {
-            Mensaje = "Por favor, ingresa el enlace de YouTube del video después del cual deseas eliminar un elemento.";
-            return;
-        }
+		Nodo nuevoNodo = new Nodo(YoutubeLink);
 
-        Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToDelete);
+		Mensaje = lista.AgregarAntesDeNodo(nodoExistente, nuevoNodo);
+		PlayVideo();
+	}
+	//----------------------------------------------------------------------------------------------------------
 
-        if (nodoExistente == null)
-        {
-            Mensaje = "El video después del cual deseas eliminar un elemento no se encontró en la lista.";
-            return;
-        }
+	void DeleteEnd()
+	{
+		Mensaje = lista.EliminarNodoAlFinal();
 
-        Mensaje = lista.EliminarDespuesDeNodo(nodoExistente);
-        PlayVideo();
-    }
-    void DeleteByLink()
-    {
-        if (string.IsNullOrEmpty(YoutubeLinkToDelete))
-        {
-            Mensaje = "Por favor, ingresa el enlace de YouTube del elemento que deseas eliminar.";
-            return;
-        }
+		PlayVideo();
 
-        Mensaje = lista.EliminarPorEnlace(YoutubeLinkToDelete);
-        PlayVideo();
-    }
-    void DeleteByPosition()
-    {
-        if (posicion <= 0)
-        {
-            Mensaje = "La posición debe ser un número positivo.";
-            return;
-        }
+	}
 
-        Mensaje = lista.EliminarPorPosicion(posicion);
-        PlayVideo();
-    }
-    //-----------------------------------------------------------------------------------------------
-    void OrdenarListaPorEnlace()
-    {
-        lista.OrdenarPorEnlace();
-    }
-    void BuscarVideoPorEnlace()
-    {
-        if (string.IsNullOrEmpty(YoutubeLinkToSearch))
-        {
-            Mensaje = "Por favor, ingresa el enlace de YouTube del video que deseas buscar.";
-            return;
-        }
+	void DeleteStart()
+	{
+		Mensaje = lista.EliminarNodoAlInicio();
 
-        var videoId = GetVideoId(YoutubeLinkToSearch);
+		PlayVideo();
 
-        if (!string.IsNullOrEmpty(videoId))
-        {
-            YoutubeId = $"https://www.youtube.com/embed/{videoId}";
-            Mensaje = "Video encontrado.";
+	}
+	void DeleteBefore()
+	{
+		if (string.IsNullOrEmpty(YoutubeLinkToDelete))
+		{
+			Mensaje = "Por favor, ingresa el enlace de YouTube del video antes del cual deseas eliminar un elemento.";
+			return;
+		}
 
-            // Actualizar el nodo actual para reflejar el video encontrado
-            var nodoEncontrado = lista.BuscarPorEnlace(YoutubeLinkToSearch);
-            if (nodoEncontrado != null)
-            {
-                lista.NodoActual = nodoEncontrado;
-            }
-        }
-        else
-        {
-            Mensaje = "El enlace proporcionado no es válido.";
-        }
-    }
-    void ToggleRecorrido()
-    {
-        if (MostrarRecorrido)
-        {
-            MostrarRecorrido = false;
-            Recorrido = string.Empty;
-        }
-        else
-        {
-            MostrarRecorrido = true;
-            Recorrido = lista.RecorridoRecursivo();
-        }
-    }
+		Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToDelete);
+
+		if (nodoExistente == null)
+		{
+			Mensaje = "El video antes del cual deseas eliminar un elemento no se encontró en la lista.";
+			return;
+		}
+
+		Mensaje = lista.EliminarAntesDeNodo(nodoExistente);
+		PlayVideo();
+	}
+	void DeleteAfter()
+	{
+		if (string.IsNullOrEmpty(YoutubeLinkToDelete))
+		{
+			Mensaje = "Por favor, ingresa el enlace de YouTube del video después del cual deseas eliminar un elemento.";
+			return;
+		}
+
+		Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToDelete);
+
+		if (nodoExistente == null)
+		{
+			Mensaje = "El video después del cual deseas eliminar un elemento no se encontró en la lista.";
+			return;
+		}
+
+		Mensaje = lista.EliminarDespuesDeNodo(nodoExistente);
+		PlayVideo();
+	}
+	void DeleteByLink()
+	{
+		if (string.IsNullOrEmpty(YoutubeLinkToDelete))
+		{
+			Mensaje = "Por favor, ingresa el enlace de YouTube del elemento que deseas eliminar.";
+			return;
+		}
+
+		Mensaje = lista.EliminarPorEnlace(YoutubeLinkToDelete);
+		PlayVideo();
+	}
+	void DeleteByPosition()
+	{
+		if (posicion <= 0)
+		{
+			Mensaje = "La posición debe ser un número positivo.";
+			return;
+		}
+
+		Mensaje = lista.EliminarPorPosicion(posicion);
+		PlayVideo();
+	}
+	//-----------------------------------------------------------------------------------------------
+	void OrdenarListaPorEnlace()
+	{
+		lista.OrdenarPorEnlace();
+	}
+	void BuscarVideoPorEnlace()
+	{
+		if (string.IsNullOrEmpty(YoutubeLinkToSearch))
+		{
+			Mensaje = "Por favor, ingresa el enlace de YouTube del video que deseas buscar.";
+			return;
+		}
+
+		var videoId = GetVideoId(YoutubeLinkToSearch);
+
+		if (!string.IsNullOrEmpty(videoId))
+		{
+			YoutubeId = $"https://www.youtube.com/embed/{videoId}";
+			Mensaje = "Video encontrado.";
+
+			// Actualizar el nodo actual para reflejar el video encontrado
+			var nodoEncontrado = lista.BuscarPorEnlace(YoutubeLinkToSearch);
+			if (nodoEncontrado != null)
+			{
+				lista.NodoActual = nodoEncontrado;
+			}
+		}
+		else
+		{
+			Mensaje = "El enlace proporcionado no es válido.";
+		}
+	}
+	void ToggleRecorrido()
+	{
+		if (MostrarRecorrido)
+		{
+			MostrarRecorrido = false;
+			Recorrido = string.Empty;
+		}
+		else
+		{
+			MostrarRecorrido = true;
+			Recorrido = lista.RecorridoRecursivo();
+		}
+	}
 
 
 
