@@ -6,9 +6,19 @@
 
 @* Reproductor *@
 
-<div class="d-flex justify-content-center mb-2">
-    <iframe src="@YoutubeId" width="800" height="400" frameborder="0" allowfullscreen></iframe>
-</div>
+@if (!string.IsNullOrEmpty(EnlaceVideoEncontrado))
+{
+    <div class="d-flex justify-content-center mb-2">
+        <iframe src="@EnlaceVideoEncontrado" width="800" height="400" frameborder="0" allowfullscreen></iframe>
+    </div>
+}
+else if (!string.IsNullOrEmpty(YoutubeId))
+{
+    <div class="d-flex justify-content-center mb-2">
+        <iframe src="@YoutubeId" width="800" height="400" frameborder="0" allowfullscreen></iframe>
+    </div>
+}
+
 
 
 @* botones *@
@@ -31,7 +41,10 @@
 
 
 <div>
-    <input type="text" class="form-control mb-2" @bind-value="YoutubeLink" />
+    <input type="text" class="form-control mb-2"placeholder="Enlace del video a agregar" @bind-value="YoutubeLink" />
+    <input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToAddAfter" placeholder="Enlace del video después / antes del cual deseas agregar" />
+    <input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToDelete" placeholder="Enlace  del video antes/despues o enlace si deseas eliminar " />
+    <input type="text" class="form-control mb-2 me-2" @bind-value="YoutubeLinkToSearch" placeholder="Enlace de YouTube del video a buscar" />
 </div>
 <div class="d-grid gap-2 col-2 mx-auto">
     
@@ -40,17 +53,42 @@
     <button class="btn btn-outline-danger" @onclick="DeleteStart">Eliminar Al Inicio</button>
     <button class="btn btn-outline-danger" @onclick="DeleteEnd">Eliminar Al Final</button>
     <button class="btn btn-success" @onclick="SavePosition">Guardar En Posicion Espesificada</button>
+    <button class="btn btn-success" @onclick="SaveAfterPosition">Guardar Después de la Posición</button>
+    <button class="btn btn-success" @onclick="SaveBeforePosition">Guardar Antes de la Posición</button>
+    <button class="btn btn-success" @onclick="AddAfter">Agregar después del video</button>
+    <button class="btn btn-success" @onclick="AddBefore">Agregar antes del video</button>
+    <button class="btn btn-danger" @onclick="DeleteAfter">Eliminar después del video</button>
+    <button class="btn btn-danger" @onclick="DeleteBefore">Eliminar antes del video</button>
+    <button class="btn btn-danger" @onclick="DeleteByLink">Eliminar por link dek video</button>
+    <button class="btn btn-danger" @onclick="DeleteByPosition">Eliminar por posicion</button>
+    <button class="btn btn-primary" @onclick="OrdenarListaPorEnlace">Ordenar por enlace</button>
+    <button class="btn btn-primary" @onclick="BuscarVideoPorEnlace">Buscar video</button>
 
 </div>
 
+<div>
+    <button class="btn btn-primary" @onclick="ToggleRecorrido">Mostrar/ocultar recorrido recursivo</button>
+
+    @if (MostrarRecorrido)
+    {
+        <p>@Recorrido</p>
+    }
+
+</div>
 <p>@Mensaje</p>
 
 @code{
+    string EnlaceVideoEncontrado = string.Empty;
     DoubleLinkedList lista;
     public int posicion;
+    string YoutubeLinkToDelete = string.Empty;
+    string YoutubeLinkToAddAfter = string.Empty;
     string YoutubeLink = string.Empty;
     string YoutubeId = string.Empty;
     string Mensaje = string.Empty;
+    string YoutubeLinkToSearch = string.Empty;
+    bool MostrarRecorrido = false;
+    string Recorrido = string.Empty;
 
     protected override void OnInitialized()
     {
@@ -59,9 +97,16 @@
 
     void PlayVideo()
     {
-        if (lista.NodoActual is not null)
+        if (lista.NodoActual != null)
         {
             YoutubeLink = lista.NodoActual.Informacion;
+
+            if (string.IsNullOrEmpty(YoutubeLink))
+            {
+                // Limpiar el reproductor de video si no hay enlace disponible
+                YoutubeId = string.Empty;
+                return;
+            }
 
             var videoId = GetVideoId(YoutubeLink);
 
@@ -69,7 +114,11 @@
             {
                 YoutubeId = $"https://www.youtube.com/embed/{videoId}";
             }
-
+        }
+        else
+        {
+            // Limpiar el reproductor de video si no hay nodo actual
+            YoutubeId = string.Empty;
         }
 
 
@@ -120,6 +169,9 @@
         PlayVideo();
 
     }
+    //----------------------------------------------------------------------------------------------------------
+
+
 
     void Save()
     {
@@ -149,23 +201,180 @@
         PlayVideo();
         YoutubeLink = string.Empty;
     }
+    void SaveAfterPosition()
+    {
+        var nuevoNodo = new Nodo(YoutubeLink);
+        Mensaje = lista.AgregarEnPosicion(posicion + 1, nuevoNodo); // Agrega después de la posición aumento 1
+        PlayVideo();
+        YoutubeLink = string.Empty;
+    }
+
+
+    void SaveBeforePosition()
+    {
+        var nuevoNodo = new Nodo(YoutubeLink);
+        Mensaje = lista.AgregarEnPosicion(posicion - 1, nuevoNodo); // Agrega antes de la posición DECREMENTO 1
+        PlayVideo();
+        YoutubeLink = string.Empty;
+    }
+    void AddAfter()
+    {
+        if (string.IsNullOrEmpty(YoutubeLinkToAddAfter) || string.IsNullOrEmpty(YoutubeLink))
+        {
+            Mensaje = "Por favor, ingresa los enlaces de YouTube.";
+            return;
+        }
+
+        Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToAddAfter);
+
+        if (nodoExistente == null)
+        {
+            Mensaje = "El video después del cual deseas agregar no se encontró en la lista.";
+            return;
+        }
+
+        Nodo nuevoNodo = new Nodo(YoutubeLink);
+
+        Mensaje = lista.AgregarDespuesDeNodo(nodoExistente, nuevoNodo);
+        PlayVideo();
+    }
+    void AddBefore()
+    {
+        if (string.IsNullOrEmpty(YoutubeLinkToAddAfter) || string.IsNullOrEmpty(YoutubeLink))
+        {
+            Mensaje = "Por favor, ingresa los enlaces de YouTube.";
+            return;
+        }
+
+        Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToAddAfter);
+
+        if (nodoExistente == null)
+        {
+            Mensaje = "El video antes del cual deseas agregar no se encontró en la lista.";
+            return;
+        }
+
+        Nodo nuevoNodo = new Nodo(YoutubeLink);
+
+        Mensaje = lista.AgregarAntesDeNodo(nodoExistente, nuevoNodo);
+        PlayVideo();
+    }
+    //----------------------------------------------------------------------------------------------------------
+
     void DeleteEnd()
     {
-
-
         Mensaje = lista.EliminarNodoAlFinal();
 
         PlayVideo();
 
     }
-  
+
     void DeleteStart()
     {
-
-
         Mensaje = lista.EliminarNodoAlInicio();
 
         PlayVideo();
 
     }
+    void DeleteBefore()
+    {
+        if (string.IsNullOrEmpty(YoutubeLinkToDelete))
+        {
+            Mensaje = "Por favor, ingresa el enlace de YouTube del video antes del cual deseas eliminar un elemento.";
+            return;
+        }
+
+        Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToDelete);
+
+        if (nodoExistente == null)
+        {
+            Mensaje = "El video antes del cual deseas eliminar un elemento no se encontró en la lista.";
+            return;
+        }
+
+        Mensaje = lista.EliminarAntesDeNodo(nodoExistente);
+        PlayVideo();
+    }
+    void DeleteAfter()
+    {
+        if (string.IsNullOrEmpty(YoutubeLinkToDelete))
+        {
+            Mensaje = "Por favor, ingresa el enlace de YouTube del video después del cual deseas eliminar un elemento.";
+            return;
+        }
+
+        Nodo nodoExistente = lista.BuscarPorEnlace(YoutubeLinkToDelete);
+
+        if (nodoExistente == null)
+        {
+            Mensaje = "El video después del cual deseas eliminar un elemento no se encontró en la lista.";
+            return;
+        }
+
+        Mensaje = lista.EliminarDespuesDeNodo(nodoExistente);
+        PlayVideo();
+    }
+    void DeleteByLink()
+    {
+        if (string.IsNullOrEmpty(YoutubeLinkToDelete))
+        {
+            Mensaje = "Por favor, ingresa el enlace de YouTube del elemento que deseas eliminar.";
+            return;
+        }
+
+        Mensaje = lista.EliminarPorEnlace(YoutubeLinkToDelete);
+        PlayVideo();
+    }
+    void DeleteByPosition()
+    {
+        if (posicion <= 0)
+        {
+            Mensaje = "La posición debe ser un número positivo.";
+            return;
+        }
+
+        Mensaje = lista.EliminarPorPosicion(posicion);
+        PlayVideo();
+    }
+    //-----------------------------------------------------------------------------------------------
+    void OrdenarListaPorEnlace()
+    {
+        lista.OrdenarPorEnlace();
+    }
+    void BuscarVideoPorEnlace()
+    {
+        if (string.IsNullOrEmpty(YoutubeLinkToSearch))
+        {
+            Mensaje = "Por favor, ingresa el enlace de YouTube del video que deseas buscar.";
+            return;
+        }
+
+        var videoId = GetVideoId(YoutubeLinkToSearch);
+
+        if (!string.IsNullOrEmpty(videoId))
+        {
+            EnlaceVideoEncontrado = $"https://www.youtube.com/embed/{videoId}";
+            Mensaje = "Video encontrado.";
+        }
+        else
+        {
+            Mensaje = "El enlace proporcionado no es válido.";
+        }
+    }
+    void ToggleRecorrido()
+    {
+        if (MostrarRecorrido)
+        {
+            MostrarRecorrido = false;
+            Recorrido = string.Empty;
+        }
+        else
+        {
+            MostrarRecorrido = true;
+            Recorrido = lista.RecorridoRecursivo();
+        }
+    }
+
+
+
 }
