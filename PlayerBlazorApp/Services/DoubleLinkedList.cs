@@ -144,16 +144,6 @@ namespace PlayerBlazorApp.Services
 
         //-------------------------------------------------------------------------------------------------------
         
-        public Nodo Posicion(int posicion)
-        {
-            int contador = 1;
-            while (contador < posicion-1 && NodoActual!=null )
-            {
-                posicion++;
-                NodoActual = NodoActual.LigaSiguiente;
-            }
-            return NodoActual;
-        }
         public Nodo Siguiente()
         {
             NodoActual = NodoActual.LigaSiguiente ?? UltimoNodo;

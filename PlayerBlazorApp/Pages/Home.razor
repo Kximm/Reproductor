@@ -6,13 +6,7 @@
 
 @* Reproductor *@
 
-@if (!string.IsNullOrEmpty(EnlaceVideoEncontrado))
-{
-    <div class="d-flex justify-content-center mb-2">
-        <iframe src="@EnlaceVideoEncontrado" width="800" height="400" frameborder="0" allowfullscreen></iframe>
-    </div>
-}
-else if (!string.IsNullOrEmpty(YoutubeId))
+@if (!string.IsNullOrEmpty(YoutubeId))
 {
     <div class="d-flex justify-content-center mb-2">
         <iframe src="@YoutubeId" width="800" height="400" frameborder="0" allowfullscreen></iframe>
@@ -30,7 +24,6 @@ else if (!string.IsNullOrEmpty(YoutubeId))
     <button @onclick="Before" class="btn btn-outline-warning">Anterior</button>
     <button @onclick="Next" class="btn btn-outline-warning">Siguiente</button>
     <button @onclick="Last" class="btn btn-outline-warning">Final</button>
-    <button @onclick="Position" class="me-2 btn btn-warning">Posicion</button>
 
 </div>
 <hr />
@@ -97,16 +90,9 @@ else if (!string.IsNullOrEmpty(YoutubeId))
 
     void PlayVideo()
     {
-        if (lista.NodoActual != null)
+        if (lista.NodoActual is not null)
         {
             YoutubeLink = lista.NodoActual.Informacion;
-
-            if (string.IsNullOrEmpty(YoutubeLink))
-            {
-                // Limpiar el reproductor de video si no hay enlace disponible
-                YoutubeId = string.Empty;
-                return;
-            }
 
             var videoId = GetVideoId(YoutubeLink);
 
@@ -114,11 +100,7 @@ else if (!string.IsNullOrEmpty(YoutubeId))
             {
                 YoutubeId = $"https://www.youtube.com/embed/{videoId}";
             }
-        }
-        else
-        {
-            // Limpiar el reproductor de video si no hay nodo actual
-            YoutubeId = string.Empty;
+
         }
 
 
@@ -143,11 +125,6 @@ else if (!string.IsNullOrEmpty(YoutubeId))
     void First()
     {
         lista.NodoActual = lista.PrimerNodo;
-        PlayVideo();
-    }
-    void Position()
-    {
-        lista.Posicion(posicion);
         PlayVideo();
     }
     void Before()
@@ -353,8 +330,15 @@ else if (!string.IsNullOrEmpty(YoutubeId))
 
         if (!string.IsNullOrEmpty(videoId))
         {
-            EnlaceVideoEncontrado = $"https://www.youtube.com/embed/{videoId}";
+            YoutubeId = $"https://www.youtube.com/embed/{videoId}";
             Mensaje = "Video encontrado.";
+
+            // Actualizar el nodo actual para reflejar el video encontrado
+            var nodoEncontrado = lista.BuscarPorEnlace(YoutubeLinkToSearch);
+            if (nodoEncontrado != null)
+            {
+                lista.NodoActual = nodoEncontrado;
+            }
         }
         else
         {
