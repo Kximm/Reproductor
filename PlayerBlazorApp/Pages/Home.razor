@@ -14,10 +14,12 @@
 @* botones *@
 
 <div class="d-flex justify-content-center mb-2">
-    <button @onclick="First" class="me-2 btn btn-primary">Primero</button>
-    <button @onclick="Before" class="me-2 btn btn-success">Anterior</button>
-    <button @onclick="Next" class="me-2 btn btn-danger">Siguiente</button>
-    <button @onclick="Last" class="me-2 btn btn-warning">Final</button>
+
+    
+    <button @onclick="First" class="btn btn-outline-warning">Primero</button>
+    <button @onclick="Before" class="btn btn-outline-warning">Anterior</button>
+    <button @onclick="Next" class="btn btn-outline-warning">Siguiente</button>
+    <button @onclick="Last" class="btn btn-outline-warning">Final</button>
     <button @onclick="Position" class="me-2 btn btn-warning">Posicion</button>
 
 </div>
@@ -26,16 +28,19 @@
     <input type="number" class="form form-control m-2" @bind="posicion" />
 </div>
 @* para guardar *@
-<hr />
-<div >
+
+
+<div>
     <input type="text" class="form-control mb-2" @bind-value="YoutubeLink" />
-    <button class="btn btn-success" @onclick="Save">Guardar Al Inicio</button>
-    <button class="btn btn-success" @onclick="SaveEnd">Guardar Al Final</button>
-    <button class="me-2 btn btn-danger" @onclick="DeleteEnd">Eliminar Al Final</button>
-    <button class="me-2 btn btn-danger" @onclick="DeleteStart">Eliminar Al Inicio</button>
-    <hr />
+</div>
+<div class="d-grid gap-2 col-2 mx-auto">
+    
+    <button class="btn btn-outline-success" @onclick="Save">Guardar Al Inicio</button>
+    <button class="btn btn-outline-success" @onclick="SaveEnd">Guardar Al Final</button>
+    <button class="btn btn-outline-danger" @onclick="DeleteStart">Eliminar Al Inicio</button>
+    <button class="btn btn-outline-danger" @onclick="DeleteEnd">Eliminar Al Final</button>
     <button class="btn btn-success" @onclick="SavePosition">Guardar En Posicion Espesificada</button>
- 
+
 </div>
 
 <p>@Mensaje</p>
